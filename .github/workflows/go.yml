@@ -22,7 +22,6 @@ jobs:
         env:
           POSTGRES_DB: simple_bank
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
         
         options: >-
           --health-cmd pg_isready
