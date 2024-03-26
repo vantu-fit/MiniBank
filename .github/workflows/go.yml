@@ -38,10 +38,10 @@ jobs:
       with:
         go-version: '1.22.1'
 
-    # -name: Create db
-    #   run: make createdb
+    - name: Create db
+      run: make createdb
 
-    -name: Migrate
+    - name: Migrate
       run: make migrateup
 
     - name: Test
