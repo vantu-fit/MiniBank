@@ -41,7 +41,12 @@ jobs:
     # - name: Create db
     #   run: make docker_createdb
     - name: install migrate
-      run: $ curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$os-$arch.tar.gz | tar xvz
+      run: |
+        go get -u -d github.com/golang-migrate/migrate/cmd/migrate
+        cd $GOPATH/src/github.com/golang-migrate/migrate/cmd/migrate
+        git checkout $TAG  # e.g. v4.1.0
+        go build -tags 'postgres' -ldflags="-X main.Version=$(git describe --tags)" -o $GOPATH/bin/migrate $GOPATH/src/github.com/golang-migrate/migrate/cmd/migrate
+        go get -u -d github.com/golang-migrate/migrate/cmd/migrate
 
     - name: Migrate
       run: make migrateup
