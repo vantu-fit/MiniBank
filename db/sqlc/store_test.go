@@ -35,9 +35,9 @@ func TestTransferTx(t *testing.T) {
 				ToAccountID:   account2.ID,
 				Amount:        10,
 			})
-			
-			errs <- err
 			results <- result
+			errs <- err
+			
 			
 		}()
 	}
@@ -49,10 +49,12 @@ func TestTransferTx(t *testing.T) {
 	var toAccount Account
 
 	for i := 0; i < n; i++ {
-		err := <-errs
-		require.NoError(t, err)
+		// chu y thu tu don kenh vao phan kenh *****
 		result := <-results
 		require.NotEmpty(t, result)
+		err := <-errs
+		require.NoError(t, err)
+		
 		// check transfer
 		transfer := result.Transfer
 		require.Equal(t, transfer.FromAccountID, arg.FromAccountID)
