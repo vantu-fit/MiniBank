@@ -8,4 +8,4 @@ sql:
         package: "db"
         out: "./db/sqlc"
         emit_json_tags: true
-        # emit_interface: fal
+        emit_interface: true

@@ -2,21 +2,23 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"testing"
-)
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable"
+	_ "github.com/lib/pq"
+	"github.com/vantu-fit/master-go-be/utils"
 )
 
 var testQueries *Queries
 var testDb *sql.DB
 var store *Store
+
 func TestMain(m *testing.M) {
-	testDb, err := sql.Open(dbDriver, dbSource)
+	config, err := utils.LoadConfig("../..")
+	testDb, err := sql.Open(config.DBDriver, config.BDSource)
+	fmt.Println(config.BDSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}

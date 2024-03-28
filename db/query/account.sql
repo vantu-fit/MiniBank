@@ -16,12 +16,18 @@ SELECT * FROM accounts
 WHERE id = $1 LIMIT 1
 FOR NO KEY UPDATE;
 
--- name: ListAccounts :many
+-- name: ListAccountsOwner :many
 SELECT * FROM accounts
 WHERE owner = $1
 ORDER BY id
 LIMIT $2
 OFFSET $3;
+
+-- name: ListAccounts :many
+SELECT * FROM accounts
+ORDER BY id
+LIMIT $1
+OFFSET $2;
 
 -- name: UpdateAccount :one
 UPDATE accounts
