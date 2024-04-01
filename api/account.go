@@ -44,16 +44,19 @@ type GetAccountRequest struct {
 func (server *Server) getAccount(ctx *gin.Context) {
 	var req GetAccountRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusBadRequest, err)
-			return
-		}
 		ctx.JSON(http.StatusBadRequest, errResponse(err))
 		return
 	}
 
+	// doc payload sau khi authentication
+	// payload , ok := ctx.MustGet(authorizationHeaderKey).(*token.Payload)
+
 	account, err := server.store.GetAccount(ctx, req.ID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusBadRequest, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
 	}
@@ -62,7 +65,6 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	return
 
 }
-
 
 // pagination list account
 type ListAccountRequest struct {

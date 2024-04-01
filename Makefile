@@ -29,4 +29,7 @@ test:
 server:
 	go run main.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test
+mock:
+	mockgen -package mockdb -destination db/mock/store.go github.com/vantu-fit/master-go-be/db/sqlc Store
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test mock

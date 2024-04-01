@@ -1,28 +1,52 @@
 package api
 
 import (
+	"github.com/vantu-fit/master-go-be/token"
+	"github.com/vantu-fit/master-go-be/utils"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	db "github.com/vantu-fit/master-go-be/db/sqlc"
 )
 
 type Server struct {
-	store  *db.Store
+	store  db.Store
 	router *gin.Engine
+	maker  token.Maker
+	config utils.Config
 }
 
-func NewServer(store *db.Store) *Server {
+func NewServer(store db.Store) (*Server, error) {
+	config, err := utils.LoadConfig("..")
+	if err != nil {
+		return nil, err
+	}
+
+	maker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, err
+	}
+
 	server := &Server{store: store}
 	router := gin.Default()
+	
+	server.maker = maker
+	server.config = config
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts" , server.listAccount)
+	authRoutes := router.Group("/").Use(authMiddleWare(server.maker))
+
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.GET("/accounts", server.listAccount)
+
+	authRoutes.POST("/transfer", server.createTransfer)
+
+	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
 
 	server.router = router
-	
 
-	return server
+	return server, nil
 
 }
 

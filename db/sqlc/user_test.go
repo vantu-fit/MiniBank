@@ -12,9 +12,11 @@ import (
 )
 
 func createRandomUser(t *testing.T) User {
+	hashedPassword , err := utils.HashedPassword(utils.RandomString(6))
+	require.NoError(t , err)
 	arg := CreateUserParams{
 		Username:       "user" + utils.RandomString(6),
-		HashedPassword: utils.RandomString(10),
+		HashedPassword: hashedPassword,
 		FullName:       utils.RandomString(6),
 		Email:          utils.RandomEmail(),
 	}
@@ -31,10 +33,11 @@ func createRandomUser(t *testing.T) User {
 }
 
 func TestCreateUser(t*testing.T){
-
+	hashedPassword , err := utils.HashedPassword(utils.RandomString(6))
+	require.NoError(t , err)
 	arg := CreateUserParams{
 		Username:       "user" + utils.RandomString(6),
-		HashedPassword: utils.RandomString(10),
+		HashedPassword: hashedPassword,
 		FullName:       utils.RandomString(6),
 		Email:          utils.RandomEmail(),
 	}

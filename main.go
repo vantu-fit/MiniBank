@@ -16,15 +16,17 @@ func main() {
 		log.Fatal("cannot read env: ", err)
 	}
 
-
-
 	conn, err := sql.Open(config.DBDriver, config.BDSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
+	
+	server , err  := api.NewServer(store)
+	if err != nil {
+		log.Fatal("cannot create server ")
+	}
 
 	err = server.Start(config.ServerAddress)
 	if err != nil {
