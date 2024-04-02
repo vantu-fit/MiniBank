@@ -10,6 +10,9 @@ docker_postgres:
 createdb:
 	psql -U postgres -c "create database simple_bank"
 
+createdb_postgres:
+	psql -h postgres -U postgres -c "create database simple_bank"
+
 docker_createdb:
 	docker exec -it postgres createdb --username=postgres --owner=postgres simple_bank
 
