@@ -16,7 +16,8 @@ jobs:
       steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
+# lên IAM tại Identity providers - OpenID Connect - audience: sts.amazonaws.com - provider: https://token.actions.githubusercontent.com
+# tạo thêm 1 role type Web identity - chọn Identity provider: GitHub - chọn Audience: sts.amazonaws.com - chọn Policy: AmazonEC2ContainerRegistryFullAccess
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
         with:
