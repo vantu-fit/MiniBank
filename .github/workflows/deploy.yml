@@ -20,6 +20,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
         with:
+          audience: sts.amazonaws.com.cn
           role-to-assume: arn:aws:iam::308764189237:user/vantu
           aws-region: ap-southeast-1
 
