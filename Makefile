@@ -1,3 +1,5 @@
+DB_URL=postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable
+
 postgres:
 	pg_ctl start
 
@@ -20,21 +22,41 @@ dropdb:
 	psql -U postgres -d simple_bank -c "drop database simple_bank"
 
 migrateup:
-	migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "$(DB_URL)" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5432/simple_bank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "$(DB_URL)" -verbose down
 
 sqlc:
 	sqlc generate
 
 test:
-	go test -v -cover ./...
+	go test -v -cover -short ./...
 
 server:
 	go run main.go
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/vantu-fit/master-go-be/db/sqlc Store
+	mockgen -package mockwk -destination worker/mock/distributor.go github.com/vantu-fit/master-go-be/worker TaskDistributor
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test mock
+proto:
+	rm -f pb/*.go 
+	rm -f doc/swagger/*.swagger.json
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+    --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=pb --grpc-gateway_opt paths=source_relative \
+	--openapiv2_out=doc/swagger  --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
+    proto/*.proto
+	statik -src=./doc/swagger -dest=./doc
+evans:
+	evans --host localhost --port 9090 -r repl
+
+db_docs:
+	dbdocs build doc/db.dbml
+
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7-alpine
+
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test mock proto evans redis

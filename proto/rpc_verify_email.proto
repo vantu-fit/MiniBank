@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb;
+
+// Removed the import statement for "user.proto"
+
+option go_package = "github.com/vantu-fit/master-go-be/pb";
+
+message VerifyEmailRequest {
+    int64 email_id = 1 ; 
+    string secret_code = 2 ;
+}
+
+message VerifyEmailResponse {
+    bool is_verified = 1;
+}
+
+
+
