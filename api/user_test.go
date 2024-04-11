@@ -87,10 +87,17 @@ func TestCreateUserAPI(t *testing.T) {
 				data, err := io.ReadAll(recorder.Body)
 				require.NoError(t, err)
 
-				var gotUser db.User
+				var gotUser createUserReponse
 				err = json.Unmarshal(data, &gotUser)
 				require.NoError(t, err)
-				require.Equal(t, gotUser, user)
+				fmt.Println(gotUser)
+				require.Equal(t, gotUser, createUserReponse{
+					Username:          user.Username,
+					FullName:          user.FullName,
+					Email:             user.Email,
+					PasswordChangedAt: user.PasswordChangedAt,
+					CreatedAt:         user.CreatedAt,
+				})
 
 			},
 		},

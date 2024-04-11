@@ -12,12 +12,13 @@ import (
 
 func TestPasetoMaker(t *testing.T) {
 	username := "user" + utils.RandomString(6)
+	role := utils.DepositorRole
 	duration := time.Minute
 
 	maker, err := NewPasetoMaker(utils.RandomString(32))
 	require.NoError(t, err)
 
-	token, err := maker.CreateToken(username, duration)
+	token, _ , err := maker.CreateToken(username, role ,duration)
 	require.NoError(t, err)
 
 	fmt.Println(token)

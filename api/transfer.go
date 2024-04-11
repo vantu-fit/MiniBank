@@ -1,11 +1,11 @@
 package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	db "github.com/vantu-fit/master-go-be/db/sqlc"
 )
 
@@ -50,7 +50,7 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 func (server *Server) validAccount(ctx *gin.Context, fromAccountID int64, currency string) bool {
 	account, err := server.store.GetAccount(ctx, fromAccountID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errResponse(err))
 			return false
 		}

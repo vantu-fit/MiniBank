@@ -2,3 +2,4 @@ write unitest giong unitest cua middleware thu co  duoc khong
 viet them unitest cho cac api con lai
 sau lai cac api theo rule TODO.png
 
+## co the su dung project react sau khi build + statik => deploy len server

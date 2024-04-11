@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 	mockdb "github.com/vantu-fit/master-go-be/db/mock"
 	db "github.com/vantu-fit/master-go-be/db/sqlc"
@@ -19,6 +19,7 @@ import (
 )
 
 func TestGetAccountAPI(t *testing.T) {
+	
 	account := randomAccount()
 
 	testCase := []struct {
@@ -42,7 +43,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "notfound",
 			accountID: account.ID,
 			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(db.Account{}, sql.ErrNoRows)
+				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(db.Account{}, pgx.ErrNoRows)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -52,7 +53,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "internalserver",
 			accountID: account.ID,
 			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(db.Account{}, sql.ErrConnDone)
+				store.EXPECT().GetAccount(gomock.Any(), gomock.Eq(account.ID)).Times(1).Return(db.Account{}, pgx.ErrTxCommitRollback)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -79,17 +80,17 @@ func TestGetAccountAPI(t *testing.T) {
 		store := mockdb.NewMockStore(ctrl)
 		tc.buildStubs(store)
 
-		server , err  := NewServer(store)
-		require.NoError(t , err)
-		
+		server, err := NewServer(store)
+		require.NoError(t, err)
+
 		recorder := httptest.NewRecorder()
 
 		url := fmt.Sprintf("/accounts/%d", tc.accountID)
 		request, err := http.NewRequest(http.MethodGet, url, nil)
 		require.NoError(t, err)
 
-		addAuthorization(t , request , server.maker , authorizationTypeBearer , account.Owner , time.Minute)
-		
+		addAuthorization(t, request, server.maker, authorizationTypeBearer, account.Owner, utils.DepositorRole ,  time.Minute)
+
 		server.router.ServeHTTP(recorder, request)
 
 		tc.checkResponse(t, recorder)
@@ -115,4 +116,61 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 	require.NoError(t, err)
 	require.Equal(t, gotAccount, account)
 
+}
+
+func TestListAccount(t *testing.T) {
+	req := ListAccountRequest{
+		PageID:   5,
+		PageSize: 5,
+	}
+	testCase := []struct {
+		name          string
+		reqBody       ListAccountRequest
+		buildStubs    func(store *mockdb.MockStore)
+		checkResponse func(t *testing.T, recoder *httptest.ResponseRecorder)
+	}{
+		{
+			name:    "OK",
+			reqBody: req,
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().ListAccounts(gomock.Any(), gomock.Any()).Times(1).Return([]db.Account{}, nil)
+
+			},
+			checkResponse: func(t *testing.T, recoder *httptest.ResponseRecorder) {
+
+			},
+		},
+	}
+
+	for i := range testCase {
+
+		user, _, err := randomUser()
+		require.NoError(t, err)
+
+		tc := testCase[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			server, err := NewServer(store)
+			require.NoError(t, err)
+
+			tc.buildStubs(store)
+
+			path := fmt.Sprintf("/accounts?page_id=%d&page_size=%d", tc.reqBody.PageID, tc.reqBody.PageSize)
+
+			recorder := httptest.NewRecorder()
+			request, err := http.NewRequest(http.MethodGet, path, nil)
+			require.NoError(t, err)
+
+			addAuthorization(t, request, server.maker, authorizationTypeBearer, user.Username, user.Role ,  time.Minute)
+
+			server.router.ServeHTTP(recorder, request)
+
+			tc.checkResponse(t, recorder)
+
+		})
+	}
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/vantu-fit/master-go-be/utils"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
 	db "github.com/vantu-fit/master-go-be/db/sqlc"
 )
 
@@ -29,7 +28,7 @@ func NewServer(store db.Store) (*Server, error) {
 
 	server := &Server{store: store}
 	router := gin.Default()
-	
+
 	server.maker = maker
 	server.config = config
 
@@ -43,6 +42,8 @@ func NewServer(store db.Store) (*Server, error) {
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	server.router = router
 

@@ -1,10 +1,10 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	db "github.com/vantu-fit/master-go-be/db/sqlc"
 )
 
@@ -53,7 +53,7 @@ func (server *Server) getAccount(ctx *gin.Context) {
 
 	account, err := server.store.GetAccount(ctx, req.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			ctx.JSON(http.StatusBadRequest, err)
 			return
 		}
@@ -75,7 +75,7 @@ type ListAccountRequest struct {
 func (server *Server) listAccount(ctx *gin.Context) {
 	var req ListAccountRequest
 	if err := ctx.ShouldBind(&req); err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			ctx.JSON(http.StatusBadRequest, errResponse(err))
 			return
 		}

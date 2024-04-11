@@ -1,0 +1,94 @@
+note:make evans 
+-> show package
+-> package pd
+-> show service
+-> service SimpleBank
+
+localhost:9090> show package
++-------------------------+
+|         PACKAGE         |
++-------------------------+
+| grpc.reflection.v1      |
+| grpc.reflection.v1alpha |
+| pb                      |
++-------------------------+
+
+localhost:9090> package pb
+
+pb@localhost:9090> show service
++------------+------------+-------------------+--------------------+
+|  SERVICE   |    RPC     |   REQUEST TYPE    |   RESPONSE TYPE    |
++------------+------------+-------------------+--------------------+
+| SimpleBank | CreateUser | CreateUserRequest | CreateUserResponse |
+| SimpleBank | LoginUser  | LoginUserRequest  | LoginUserResponse  |
++------------+------------+-------------------+--------------------+
+
+pb@localhost:9090> call CreateUser
+
+------------------------------------------------------------------------------------------------------------------------------------------
+# DBDOCS
+ dbdocs
+VERSION
+  dbdocs/0.9.1 win32-x64 node-v18.18.0
+
+USAGE
+  $ dbdocs [COMMAND]
+
+COMMANDS
+  build     build docs
+  help      Display help for dbdocs.
+  login     login to dbdocs
+  logout    logout
+  ls        list projects
+  password  set password for your project or remove password
+  remove    remove project
+  rename    change your username
+  token     generate or revoke your authentication token
+  validate  validate docs content
+
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs ls
+    Error: Please login first.
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs login
+? Choose a login method: Email
+? Your email: dotu30257@gmail.com
+✖ Request email authentication
+    TypeError: Cannot read properties of undefined (reading 'name')
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs login
+? Choose a login method: Email
+? Your email: dotu30257@gmail.com
+✔ Request email authentication
+? Please input OTP code sent to the email: 785101
+✔ Login to your account
+✔ Validate token
+✔ Save credential
+
+Done.
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs ls
+dotu30257
+ Name                Sharing                Url  Last updated
+ ─────────────────── ────────────────────── ──── ─────────────
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs build doc/db.dbml
+✔ Parsing file content
+⚠ Project 'simple_bank' is public, consider setting password or restricting access to it
+✔ Done. Visit: https://dbdocs.io/dotu30257/simple_bank
+
+ℹ Thanks for using dbdocs! We'd love to hear your feedback: https://form.jotform.com/200962053361448
+
+ACER@LAPTOP-5NBELE3J MINGW64 /c/VanTu/udemy/Go/master-go-be (ft/docker)
+$ dbdocs ls
+dotu30257
+ Name                Sharing                Url                                      Last updated
+ ─────────────────── ────────────────────── ──────────────────────────────────────── ──────────────────
+ simple_bank         Shared URL             https://dbdocs.io/dotu30257/simple_bank  12:25:52 5/4/2024
+
+ -------------------------------------------------------------------------------------------------------------------------------------
