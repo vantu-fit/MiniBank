@@ -60,9 +60,6 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "cannot create user: %s", err)
 	}
 
-	fmt.Println("creating user >>>")
-	time.Sleep(time.Second * 30)
-
 	response = &pb.CreateUserResponse{
 		User: &pb.User{
 			Username:          user.User.Username,
@@ -93,5 +90,4 @@ func validateCreteUserRequest(req *pb.CreateUserRequest) (violatios []*errdetail
 	}
 
 	return violatios
-
 }

@@ -47,7 +47,6 @@ func (server *Server) authorizationUser(ctx context.Context , accessibleRole []s
 	}
 
 	return payload, nil
-
 }
 
 func hassPermission(userRole string , accessibleRole []string) bool {

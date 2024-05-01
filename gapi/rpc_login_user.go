@@ -63,7 +63,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		IsBlocked:    false,
 		ExpiresAt:    refreshPayload.ExpiredAt,
 	}
-
+	// create session
 	session, err := server.store.CreateSession(ctx, argSession)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Cannot parser duration: %s", err)
