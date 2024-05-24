@@ -58,5 +58,8 @@ db_docs:
 redis:
 	docker run --name redis -p 6379:6379 -d redis:7-alpine
 
+gen-client-ts:
+	openapi-generator-cli generate -i ./doc/swagger/simple_bank.swagger.json -g typescript-fetch -o ./client-ts
+
 
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test mock proto evans redis
