@@ -2,6 +2,13 @@
 
 MiniBank is a simple banking system that allows users to create an account, deposit, withdraw, and transfer money between accounts.
 
+## Technical stack
+<!-- Sử dụng redis làm hàng đợi thực hiện các task gủi verify email  -->
+- Redis: Use as a queue to perform tasks to send verify email.
+- Postgres: Use to store user information, transaction history, and account balance.
+- Grpc: Use to communicate between services.
+
+
 ## Architecture diagram
 ![MiniBank](doc/MiniBank.png)
 
